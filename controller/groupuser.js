@@ -16,7 +16,11 @@ exports.getgroupuser = async (req, res) => {
 
 exports.postgroupuser = async (req, res) => {
   try {
-    const groupuserdata = await groupuser.create(req.body);
+    const user_id = req.user.id;
+    const groupuserdata = await groupuser.create({
+      group_id,
+      user_id:user_id,
+    });
 
     res.json(groupuserdata);
   } catch (error) {
@@ -52,10 +56,11 @@ exports.postupdategroupuser = async(req,res)=>{
   }
 
 
-  exports.postdelete =async(req,res)=>{
+  exports.postdeletegroupuser =async(req,res)=>{
+    const { user_id, group_id } = req.body;
     try {
       const deleted = await groupuser.destroy({
-        where: { id: req.params.id }
+        where: {user_id,group_id}
       });
       if (deleted) {
         res.status(204).json();

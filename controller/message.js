@@ -5,6 +5,7 @@ const Sequelize = require("sequelize");
 app.set("view engine", "ejs");
 const router = express.Router();
 const bodyParser = require("body-parser");
+const jwt = require('jsonwebtoken');
 const { user, contact, message } = require('../models')
 app.use(bodyParser.urlencoded({ extended: true }));
 
@@ -16,7 +17,13 @@ exports.getmessage = async (req, res) => {
 
 exports.postmessage = async (req, res) => {
   try {
-    const userdata = await message.create(req.body);
+    const { receiver_id, content } = req.body;
+    const sender_id = req.user.id;
+    const userdata = await message.create({
+      sender_id:sender_id,
+      receiver_id:receiver_id,
+      content:content,
+    });
 
     res.json(userdata);
   } catch (error) {
@@ -38,10 +45,10 @@ try {
 exports.postupdatemessage = async(req,res)=>{
   try {
     const updated = await message.update(req.body, {
-      where: { id: req.params.id }
+      where: { id: req.user.id }
     });
     if (updated) {
-      const updatedUser = await message.findByPk(req.params.id);
+      const updatedUser = await message.findByPk(req.user.id);
       res.status(200).json(updatedUser);
     } else {
       res.status(404).json({ error: 'User not found' });
@@ -52,10 +59,10 @@ exports.postupdatemessage = async(req,res)=>{
   }
 
 
-  exports.postdeleteconatct =async(req,res)=>{
+  exports.postdeletemessage =async(req,res)=>{
     try {
       const deleted = await message.destroy({
-        where: { id: req.params.id }
+        where: { id: req.user.id }
       });
       if (deleted) {
         res.status(204).json();
@@ -66,3 +73,21 @@ exports.postupdatemessage = async(req,res)=>{
       console.log(error);
     }
   }
+
+exports.markMessageAsRead=async(req, res) =>{
+    try {
+      const { id } = req.body;
+      const [updated] = await message.update({ is_read: 1 }, {
+        where: { id: id }
+      });
+      if (updated) {
+        const updatedMessage = await message.findByPk(id);
+        res.status(200).json(updatedMessage);
+      } else {
+        res.status(404).json({ error: 'Message not found' });
+      }
+    } catch (error) {
+      res.status(400).json({ error: error.message });
+    }
+  }
+

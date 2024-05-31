@@ -3,17 +3,17 @@
 /** @type {import('sequelize-cli').Migration} */
 module.exports = {
   async up (queryInterface, Sequelize) {
-    queryInterface.addConstraint('contacts', {
-      fields: ['user_id'],
-      type: 'foreign key',
-      name: 'custom_fkey_constraint_contact_user',
-      references: { 
-        table: 'users',
-        field: 'id'
-      },
-      onDelete: 'cascade',
-      onUpdate: 'cascade'
-    });
+    // queryInterface.addConstraint('contacts', {
+    //   fields: ['user_id'],
+    //   type: 'foreign key',
+    //   name: 'custom_fkey_constraint_contact_user',
+    //   references: { 
+    //     table: 'users',
+    //     field: 'id'
+    //   },
+    //   onDelete: 'cascade',
+    //   onUpdate: 'cascade'
+    // });
 
 
 
@@ -61,7 +61,7 @@ module.exports = {
     queryInterface.addConstraint('groupmessages', {
       fields: ['group_id'],
       type: 'foreign key',
-      name: 'custom_fkey_constraint_group_id',
+      name: 'custom_fkey_constraint_messagegroupid',
       references: { 
         table: 'groups',
         field: 'id'
@@ -96,27 +96,9 @@ module.exports = {
       onUpdate: 'cascade'
     });
 
-
-
-    queryInterface.addConstraint('groups', {
-      fields: ['group_id'],
-      type: 'foreign key',
-      name: 'custom_fkey_constraint_group_id',
-      references: { 
-        table: 'groups',
-        field: 'id'
-      },
-      onDelete: 'cascade',
-      onUpdate: 'cascade'
-    });
   },
 
   async down (queryInterface, Sequelize) {
-    /**
-     * Add reverting commands here.
-     *
-     * Example:
-     * await queryInterface.dropTable('users');
-     */
+   
   }
 };
